@@ -2,8 +2,7 @@ from llm import chat
 from memory import load_memory, save_memory
 from prompts import SYSTEM_PROMPT
 from parse import parse_tool_call
-from tools import calculator, get_date, unit_converter, get_weather
-
+from tools import calculator, get_date, unit_converter, get_weather, search_wikipedia, web_search
 class Agent:
 
     def run(self, user_input: str) -> str:
@@ -52,6 +51,12 @@ class Agent:
 
         elif tool_request["tool"] == "weather":
             tool_result = get_weather(tool_request["city"])
+            
+        elif tool_request["tool"] == "wikipedia":
+            tool_result = search_wikipedia(tool_request["query"])
+
+        elif tool_request["tool"] == "web_search":
+            tool_result = web_search(tool_request["query"])
 
         else:
             tool_result = "Unknown tool "

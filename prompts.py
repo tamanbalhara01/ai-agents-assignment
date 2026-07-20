@@ -96,6 +96,54 @@ Return JSON:
 {"tool":"converter","value":5,"from":"km","to":"m"}
 
 =========================================================
+TOOL 5
+
+Name:
+wikipedia
+
+Purpose:
+Look up factual, encyclopedic information about a person, place, thing, or
+event on Wikipedia (biographies, history, definitions, general knowledge).
+
+Return JSON:
+{"tool":"wikipedia","query":"Albert Einstein"}
+
+Examples
+
+User:
+Who was Marie Curie?
+
+User:
+Tell me about the Eiffel Tower.
+
+User:
+What is quantum entanglement?
+
+=========================================================
+TOOL 6
+
+Name:
+web_search
+
+Purpose:
+Search the live web for current information, news, or anything that
+requires up-to-date results (not fixed encyclopedic facts).
+
+Return JSON:
+{"tool":"web_search","query":"latest news on India's GDP growth"}
+
+Examples
+
+User:
+What's the latest news about SpaceX?
+
+User:
+What is the current price of Bitcoin?
+
+User:
+Who won the match yesterday?
+
+=========================================================
 OUTPUT FORMAT
 
 Whenever a tool is required,
@@ -131,6 +179,20 @@ Weather
 {
     "tool":"weather",
     "city":"Delhi"
+}
+
+Wikipedia
+
+{
+    "tool":"wikipedia",
+    "query":"Albert Einstein"
+}
+
+Web Search
+
+{
+    "tool":"web_search",
+    "query":"current price of Bitcoin"
 }
 
 =========================================================

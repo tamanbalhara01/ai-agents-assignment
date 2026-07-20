@@ -3,7 +3,7 @@ import operator
 import math
 import requests
 
-from config import OPENWEATHER_API_KEY
+from config import OPENWEATHER_API_KEY, TAVILY_API_KEY
 
 OPERATORS = {
     ast.Add: operator.add,
@@ -126,3 +126,78 @@ if __name__ == "__main__":
             break
 
         print("Result:", calculator(expr))
+
+def search_wikipedia(query: str):
+    try:
+        # Step 1: find the best-matching page title
+        search_url = "https://en.wikipedia.org/w/api.php"
+        search_params = {
+            "action": "query",
+            "list": "search",
+            "srsearch": query,
+            "format": "json",
+            "srlimit": 1,
+        }
+        search_response = requests.get(search_url, params=search_params, timeout=5)
+        search_data = search_response.json()
+        results = search_data.get("query", {}).get("search", [])
+
+        if not results:
+            return f"No Wikipedia results found for '{query}'."
+
+        title = results[0]["title"]
+
+        # Step 2: fetch a short summary for that page
+        summary_url = f"https://en.wikipedia.org/api/rest_v1/page/summary/{title}"
+        summary_response = requests.get(summary_url, timeout=5)
+        summary_data = summary_response.json()
+
+        extract = summary_data.get("extract")
+        if not extract:
+            return f"Found the Wikipedia page '{title}' but couldn't retrieve a summary."
+
+        page_url = summary_data.get("content_urls", {}).get("desktop", {}).get("page")
+        result = f"{title}: {extract}"
+        if page_url:
+            result += f"\nSource: {page_url}"
+
+        return result
+
+    except Exception as e:
+        return f"Wikipedia lookup failed: {e}"
+
+
+def web_search(query: str):
+    if not TAVILY_API_KEY:
+        return "Web search is not configured (missing TAVILY_API_KEY)."
+
+    try:
+        url = "https://api.tavily.com/search"
+        payload = {
+            "api_key": TAVILY_API_KEY,
+            "query": query,
+            "max_results": 3,
+            "include_answer": True,
+        }
+        response = requests.post(url, json=payload, timeout=10)
+        data = response.json()
+
+        if response.status_code != 200:
+            return f"Web search failed: {data.get('error', 'unknown error')}"
+
+        lines = []
+
+        if data.get("answer"):
+            lines.append(f"Answer: {data['answer']}")
+
+        for r in data.get("results", [])[:3]:
+            snippet = (r.get("content") or "")[:200].strip()
+            lines.append(f"- {r.get('title')} ({r.get('url')})\n  {snippet}")
+
+        if not lines:
+            return f"No web results found for '{query}'."
+
+        return "\n".join(lines)
+
+    except Exception as e:
+        return f"Web search failed: {e}"

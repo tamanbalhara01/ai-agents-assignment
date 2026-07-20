@@ -49,7 +49,20 @@ if prompt:
     })
 
 # Sidebar
+# Sidebar
 with st.sidebar:
+    st.header("🛠️ Capabilities")
+    st.markdown("""
+- 🧮 **Calculator** — arithmetic, algebra, trigonometry
+- 📅 **Date & Time** — current date/time
+- 🌦️ **Weather** — live weather for any city
+- 📏 **Unit Converter** — km↔m, kg↔g, °C↔°F
+- 📖 **Wikipedia** — factual/encyclopedic lookups
+- 🔎 **Web Search** — current events, live info
+    """)
+
+    st.divider()
+
     st.header("Options")
 
     if st.button("Clear Chat"):
